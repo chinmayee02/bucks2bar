@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     const downloadButton = document.getElementById('download-btn');
+    const emailButton = document.getElementById('send-email');
     const canvas = document.getElementById('barChart');
 
     downloadButton.addEventListener('click', function () {
@@ -25,6 +26,36 @@ document.addEventListener("DOMContentLoaded", function () {
         link.href = image;
         link.download = 'chart.png'; // Set the file name for the download
         link.click(); // Trigger the download
+    });
+
+    emailButton.addEventListener('click', async function () {
+        const canvas = document.getElementById('barChart');
+        const image = canvas.toDataURL('image/png'); // Convert chart to base64 image
+    
+        const email = document.getElementById('email-input').value; // Get the email input value
+        if (!email) {
+            alert("Email address is required!");
+            return;
+        }
+    
+        try {
+            const response = await fetch('http://localhost:3000/send-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, image }),
+            });
+    
+            if (response.ok) {
+                alert("Email sent successfully!");
+            } else {
+                alert("Failed to send email.");
+            }
+        } catch (error) {
+            console.error("Error sending email:", error);
+            alert("An error occurred while sending the email.");
+        }
     });
 
 
